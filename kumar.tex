@@ -913,22 +913,49 @@ Entropy(S) = \sum-p_i\log_2p_i
 Here, the summation is over different categories of the target variable. $P_i$ is the proportion (over the total number of observations) of the $i^{th}$ particular category of the target variable.
 
 
+\subsubsection*{Information gain}
+
+The information gain for a particular variable V is defined as follows:
+
+\begin{equation*}
+information Gain ( S , V ) = S_v - \sum(V_c	/V). Entropy(V_c)
+\end{equation*}
+
+$S_v$ is the total entropy for the node variable V, c stands for the categories in the node variable, $V_c$ is the number of total observation with the category c of the node variable, V is the total number of observations, and Entropy($V_c$) is the entropy of the system having observations with the category c of the node variable. Summation is over the categories of the variable. The variable that provides the maximum information gain is chosen to be the node. \\
+
+\subsubsection*{ID3 algorithm to create a decision tree}
+
+The tree keeps growing by selecting the next variable that results in the maximum
+information gain as a subnode branching out from this node. A node should be chosen separately for each branch of the previous node. The variables already used for the split still qualify to be considered for being a node. It is a recursive process that stops when the node is totally homogeneous (pure), or it reaches the maximum possible depth (the number of observations in the dataset) of the tree. \\
+
+This algorithm using entropy and information gain is called ID3 algorithm, and can
+be summarized as follows:
+
+\begin{enumerate}
+	\item Calculate the initial entropy of the system based on the target variable.
+	\item Calculate the information gains for each candidate variable for a
+	node. Select the variable that provides the maximum information gain as a
+	decision node.
+	\item Repeat step 2 for each branch (value) of the node (variable) identified in
+	step 2. The newly identified node is termed as leaf node.
+	\item Check whether the leaf node classifies the entire data perfectly. If not, repeat the steps from step 2 onwards. If yes, stop.
+\end{enumerate}
+
+Apart from the ID3 algorithm involving entropy and information gain, there are other algorithms that can be used to decide which variable should be chosen as a subnode. Some of them are Gini index method, \textbf{Chi-Square Automatic Interaction Detector (CHAID)} method, and \textbf{Reduction in Variance} method. All these algorithms are useful and might give better results than the others in specific scenarios. A summary of all these methods is available in the following table: [** see table on page 448] \\
 
 
+\subsubsection*{Gini index}
+
+Gini method works only when the target variable is a binary variable. This method is
+used by the famous CART algorithm. Gini is defined as the sum of the square of proportions of categories of the target variable for the particular category of the node variable. Then, Gini index for a variable is calculated by taking a weighted average over the categories. Gini index is calculated for all the candidate variables. A variable with a higher Gini index is selected to create the subnode [** see page 448 for more details and examples].
 
 
+\subsubsection*{Reduction in Variance}
 
+In the Reduction in Variance method, the target variable is supposed to be a
+numerical variable. The weighed variance is calculated for each variable. The variable with the smallest weighted variance is chosen to be the node [** See page 449 for an example]. 
 
-
-
-
-
-
-
-
-
-
-
+\subsection*{Pruning a tree}
 
 
 
