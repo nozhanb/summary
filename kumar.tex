@@ -1,0 +1,1067 @@
+\documentclass{article}
+
+%\usepackage{amsfonts}
+\usepackage{amsmath}
+
+\usepackage[dvipsnames]{xcolor}
+\numberwithin{equation}{section} % to change the numbering of the section from x to x.y
+
+\begin{document}
+
+\subsection*{Functional statistics}
+
+\begin{itemize}
+	\item df5.sum()\\
+	By default, the function will calculate on index axis, which is axis 0. \\
+	\textbf{Series}: We do not need to specify the axis. \\
+	\textbf{DataFrame}: Columns (axis = 1) or index (axis = 0). The default setting is
+	axis 0.\\
+	We also have the skipna parameter that allows us to decide whether to exclude
+	missing data or not. By default, it is set as true: 
+	\item df7.sum(skipna=False)
+\end{itemize}
+
+\subsection*{Function application}
+
+Using apply to execute the std() function \\
+
+df5.apply(np.std, axis=1)	\hspace{2cm}	\# default: axis=0\\
+or\\
+f = lambda x: x.max() – x.min()		\hspace{2cm} \# step 1\\
+df5.apply(f, axis=1)				\hspace{2cm} \# step 2\\
+
+\subsection*{Sorting}
+
+Firstly, we will consider methods for sorting by row and column index. In this case,
+we have the sort\_index () function. We also have axis parameter to set whether
+the function should sort by row or column. The ascending option with the true or
+false value will allow us to sort data in ascending or descending order. The default
+setting for this option is true:\\
+
+df7.sort\_index(axis=1)\\
+
+Series has a method order that sorts by value. For NaN values in the object, we can
+also have a special treatment via the na\_position option:\\
+
+s4.order(na\_position='first')\\
+
+Besides that, Series also has the sort() function that sorts data by value. However,
+the function will not return a copy of the sorted data:\\
+
+s4.sort(na\_position='first')\\
+
+If we want to apply sort function to a DataFrame object, we need to figure out which
+columns or rows will be sorted:\\
+
+df7.sort(['b', 'd'], ascending=False)\\
+
+If we do not want to automatically save the sorting result to the current data object,
+we can change the setting of the inplace parameter to False.\\
+
+\subsection*{Indexing and selecting data}
+
+s4[['024', '002']]	\hspace{2cm}	\# selecting data of Series object\\
+
+s4[['024', '002']] = 'unknown' 	\hspace{2cm}	\# assigning data \\
+
+If the data object is a DataFrame structure, we can also proceed in a similar way:\\
+
+df5[['b', 'c']] \\
+
+For label indexing on the rows of DataFrame, we use the ix function that enables us
+to select a set of rows and columns in the object. There are two parameters that we
+need to specify: the row and column labels that we want to get. By default, if we do
+not specify the selected column names, the function will return selected rows with all
+columns in the object:\\
+
+df5.ix[0] \\
+
+df5.ix[0, 1:3] \\
+
+\subsection*{Computational tools}
+
+Both the Series and DataFrame have a \textit{cov} method. On a DataFrame object, this
+method will compute the covariance between the Series inside the object:
+
+s1.cov(s2) \\
+
+df8.cov() \\
+
+Usage of the correlation method is similar to the covariance method. It computes the
+correlation between Series inside a data object in case the data object is a DataFrame. However, we need to specify which method will be used to compute the correlations. The available methods are \textit{pearson}, \textit{kendall}, and \textit{spearman}. By default, the function applies the spearman method: \\
+
+df8.corr(method = 'spearman') \\
+
+We also have the corrwith function that supports calculating correlations between
+Series that have the same label contained in different DataFrame objects: \\
+
+df8.corrwith(df9) \\
+
+
+\subsection*{Working with missing data}
+
+ It is a very common situation to arrive with missing data in an object. To manipulate missing values, we can use the isnull() or notnull() functions to
+ detect the missing values in a Series object, as well as in a DataFrame object: \\
+ 
+ df10.isnull() \\
+ 
+ s4.dropna() 	\hspace{2cm}	\# dropping all null value of Series object\\
+ 
+ With a DataFrame object, it is a little bit more complex than with Series. We can tell which rows or columns we want to drop and also if all entries must be null or a
+ single null value is enough. By default, the function will drop any row containing a
+ missing value: \\
+ 
+ df9.dropna(axis=1) \\
+ 
+ Another way to control missing values is to use the supported parameters of
+ functions that we introduced in the previous section. They are also very useful to
+ solve this problem. In our experience, we should assign a fixed value in missing
+ cases when we create data objects. This will make our objects cleaner in later
+ processing steps. For example, consider the following: \\
+ 
+ df11 = df8.reindex([3, 2, 'a', 0], fill\_value = 0) \\
+
+We can alse use the fillna function to fill a custom value in missing values: \\
+
+df9.fillna(-1) \\
+
+\section*{Advanced uses of Pandas for data analysis}
+ 
+\subsection*{Hierarchical indexing}
+ 
+Hierarchical indexing provides us with a way to work with higher dimensional
+data in a lower dimension by structuring the data object into multiple index
+levels on an axis: \\
+
+s8 = pd.Series(np.random.rand(8), index=[['a','a','b','b','c','c','d','d'], [0, 1, 0, 1, 0,1, 0, 1, ]]) \\
+
+In the preceding example, we have a Series object that has two index levels. The object can be rearranged into a DataFrame using the unstack function. In an inverse situation, the stack function can be used: \\
+
+s8.unstack() \\
+
+We can also create a DataFrame to have a hierarchical index in both axes: \\
+
+df = pd.DataFrame(np.random.rand(12).reshape(4,3), index=[['a', 'a', 'b', 'b'], [0, 1, 0, 1]], columns=[['x', 'x', 'y'], [0, 1, 0]]) \\
+
+df.index \\
+
+df.columns \\
+
+The methods for getting or setting values or subsets of the data objects with multiple
+index levels are similar to those of the nonhierarchical case: \\
+
+df['x'][0] \\
+
+df.ix['a', 'x'] \\
+
+df.ix['a','x'].ix[1] \\
+
+After grouping data into multiple index levels, we can also use most of the descriptive and statistics functions that have a level option, which can be used to
+specify the level we want to process: \\
+
+df.std(level=1) \\
+
+\subsection*{The Panel data}
+
+[** read this section later from the book.]
+
+The Panel is another data structure for three-dimensional data in Pandas. However, it is less frequently used than the Series or the DataFrame. You can think of a Panel as a table of DataFrame objects. We can create a Panel object from a 3D ndarray or a dictionary of DataFrame objects: \\
+
+\# create a Panel from 3D ndarray \\
+
+panel = pd.Panel(np.random.rand(2, 4, 5), items = ['item1', 'item2']) \\
+
+
+\section*{Data Visualization}
+
+\subsection*{Plotting functions with Pandas}
+
+For Series or DataFrame objects in Pandas, most plotting types are supported, such as line, bar, box, histogram, and scatter plots, and pie charts. To select a plot type, we use the kind argument of the plot function. With no kind of plot specified, the plot function will generate a line style visualization by default , as in the following example:
+
+s = pd.Series(np.random.normal(10, 8, 20)) \\
+
+s.plot(style='ko—', alpha=0.4, label='Series plotting') \\
+
+plt.legend()\\
+
+plt.show() \\
+
+Another example will visualize the data of a DataFrame object consisting of multiple columns: \\
+
+df1.plot(kind='bar', subplots=True, sharex=True) \\
+
+plt.tight\_layout() \\
+
+plt.show() \\
+
+\subsection*{Bokeh}
+
+[** Read it from the book.]
+
+\subsection*{MayaVi}
+
+[** Read it from the book.]
+
+
+
+\section*{Time Series}
+
+\subsection*{Working with date and time objects}
+
+Pandas abstracts away a lot of the friction, when dealing with strings representing dates or time. One of these helper functions is \textit{to\_datetime}: \\
+
+pd.to\_datetime("4th of July") \\
+
+pd.to\_datetime("13.01.2000") \\
+
+pd.to\_datetime("7/8/2000") \\
+
+The last can refer to August 7th or July 8th, depending on the region. To disambiguate this case, to\_datetime can be passed a keyword argument \textit{dayfirst}: \\
+
+pd.to\_datetime("7/8/2000", dayfirst=True) \\
+
+Timestamp objects can be seen as Pandas' version of datetime objects and indeed,
+the Timestamp class is a subclass of datetime: \\
+
+$>>>$ issubclass(pd.Timestamp, datetime.datetime) \\
+
+True \\
+
+$>>>$ ts = pd.to\_datetime(946684800000000000) \\
+
+$>>>$ ts.year, ts.month, ts.day, ts.weekday() \\
+
+(2000, 1, 1, 5) \\
+
+since timestamps are the building block of DateTimeIndex objects: \\
+
+$>>>$ index = [pd.Timestamp("2000-01-01"), pd.Timestamp("2000-01-02"), pd.Timestamp("2000-01-03")] \\
+$>>>$ ts = pd.Series(np.random.randn(len(index)), index=index)\\
+
+>>> ts.indexDatetimeIndex(['2000-01-01', '2000-01-02', '2000-01-03'],
+dtype='datetime64[ns]', freq=None, tz=None) \\
+
+There are a few things to note here: We create a list of timestamp objects and pass
+it to the series constructor as index. This list of timestamps gets converted into a
+\textit{DatetimeIndex} on the fly. If we had passed only the date strings, we would not get a \textit{DatetimeIndex}, just an \textit{index}: \\
+
+However, the to\_datetime function is flexible enough to be of help, if all we have
+is a list of date strings:\\
+
+index = pd.to\_datetime(["2000-01-01", "2000-01-02", "2000-01-03"]) \\
+
+The date\_range function helps to generate a fixed frequency datetime index
+between start and end dates. It is also possible to specify either the start or end date and the number of timestamps to generate. The frequency can be specified by the freq parameter, which supports a number of offsets. You can use typical time intervals like hours, minutes, and seconds: \\
+
+pd.date\_range(start="2000-01-01", periods=3, freq='H') \\
+
+pd.date\_range(start="2000-01-01", periods=3, freq='T') \\
+
+pd.date\_range(start="2000-01-01", periods=3, freq='S') \\
+
+[** see page 87 for a complete list of freq options.]
+
+Moreover, The offset aliases can be used in combination as well. Here, we are
+generating a datetime index with five elements, each one day, one hour, one minute
+and one second apart: \\
+
+pd.date\_range(start="2000-01-01", periods=5, freq='1D1h1min10s') \\
+
+Some frequencies allow us to specify an anchoring suffix, which allows us to express
+intervals, such as every Friday or every second Tuesday of the month:
+
+pd.date\_range(start="2000-01-01", periods=5, freq='W-FRI') \\
+
+pd.date\_range(start="2000-01-01", periods=5, freq='WOM-2TUE') \\
+
+Finally, we can merge various indexes of different frequencies. The possibilities
+are endless. We only show one example, where we combine two indexes – each over
+a decade – one pointing to every first business day of a year and one to the last day
+of February: \\
+
+s = pd.date\_range(start="2000-01-01", periods=10, freq='BAS-JAN') \\
+
+t = pd.date\_range(start="2000-01-01", periods=10, freq='A-FEB') \\
+
+s.union(t) \\
+
+We see, that 2000 and 2005 did not start on a weekday and that 2000, 2004, and 2008
+were the leap years. \\
+
+It is even possible to use partial strings to select groups of entries. If we are only
+interested in February, we could simply write: \\
+
+ts['2000-02'] \\
+
+To see all entries from March until May, including: \\
+
+ts['2000-03':'2000-05'] \\
+
+Time series can be shifted forward or backward in time. The index stays in place,
+the values move: \\
+
+small\_ts.shift(2) \\
+
+To shift backwards in time, we simply use negative values: \\
+
+small\_ts.shift(-2) \\
+
+
+\subsection*{Resampling time series}
+
+ On the
+other hand, real-world data may not be taken in uniform intervals and it is required
+to map observations into uniform intervals or to fill in missing values for certain
+points in time. These are two of the main use directions of resampling: binning
+and aggregation, and filling in missing data. Downsampling and upsampling
+occur in other fields as well, such as digital signal processing. There, the process of downsampling is often called decimation and performs a reduction of the sample
+rate. The inverse process is called \textbf{interpolation}, where the sample rate is increased.
+
+
+\subsection*{Downsampling time series data}
+
+We can choose an aggregation function as well. The default aggregation is to take all the values and calculate the mean: \\
+
+ts.resample('10min') \\
+
+we are also interested in the sum of the values, that is, the combined number of visitors for a given time frame. \\
+
+ts.resample('10min', how='sum') \\
+
+Or we can reduce the sampling interval even more by resampling to an hourly interval: \\
+
+ts.resample('1h', how='sum') \\
+
+or to find the maximum \\
+
+ts.resample('1h', how='max') \\
+
+Or we can define a custom function if we are interested in more unusual metrics. For example, we could be interested in selecting a random sample for each hour: \\
+
+import random \\
+
+ts.resample('1h', how=lambda m: random.choice(m)) \\
+
+The built-in functions that can be used as argument to how are: sum, mean, std, sem,
+max, min, median, first, last, ohlc. The ohlc metric is popular in finance. It stands
+for open-high-low-close. While in our airport this metric might not be that valuable, we can compute it nonetheless: \\
+
+ts.resample('1h', how='ohlc') \\
+
+
+\subsection*{Upsampling time series data}
+
+There are various ways to deal with missing values, which can be controlled by the fill\_method keyword argument to resample. Values can be filled either forward or backward: \\
+
+ts.resample('15min', fill\_method='ffill') \\
+
+ts.resample('15min', fill\_method='bfill') \\
+
+With the limit parameter, it is possible to control the number of missing values to be filled: \\
+
+ts.resample('15min', fill\_method='ffill', limit=2) \\
+
+If you want to adjust the labels during resampling, you can use the loffset keyword argument: \\
+
+ts.resample('15min', fill\_method='ffill', limit=2, loffset='5min') \\
+
+There is another way to fill in missing values. We could employ an algorithm to construct new data points that would somehow fit the existing points, for some definition of somehow. This process is called interpolation. We can ask Pandas to interpolate a time series for us: \\
+
+$>>>$ tsx = ts.resample('15min') ---> tsx.interpolate() \\
+
+We saw the default interpolate method – a linear interpolation – in action. Pandas assumes a linear relationship between two existing points. Pandas supports over a dozen interpolation functions, some of which require the scipy library to be installed. We will not cover interpolation methods in this chapter, but we encourage you to explore the various methods yourself. \\
+
+\subsection*{Time zone handling}
+
+By default, Pandas objects are time zone unaware. Pandas builds on the time zone capabilities of two popular and proven utility libraries for time and date handling: pytz and dateutil: \\
+
+t = pd.Timestamp('2000-01-01') \\
+
+To supply time zone information, you can use the tz keyword argument: \\
+
+$>>>$ t = pd.Timestamp('2000-01-01', tz='Europe/Berlin') \\
+
+$>>>$ t.tz\\
+<DstTzInfo 'Europe/Berlin' CET+1:00:00 STD> \\
+
+This works for ranges as well: \\
+
+rng = pd.date\_range('1/1/2000 00:00', periods=10, freq='D', tz='Europe/London')
+
+Time zone objects can also be constructed beforehand: \\
+
+import pytz ---> tz = pytz.timezone('Europe/London') ---> rng = pd.date\_range('1/1/2000 00:00', periods=10, freq='D', tz=tz) \\
+
+Sometimes, you will already have a time zone unaware time series object that you
+would like to make time zone aware. The tz\_localize function helps to switch
+between time zone aware and time zone unaware objects: \\
+
+ts.index.tz is None ---> True \\
+
+ts\_utc = ts.tz\_localize('UTC') ---> ts\_utc.index.tz ---> <UTC> \\
+
+Finally, to detach any time zone information from an object, it is possible to pass
+None to either tz\_convert or tz\_localize: \\
+
+ts\_utc.tz\_convert(None).index.tz is None \\
+
+ts\_utc.tz\_localize(None).index.tz is None
+
+\subsection*{Timedeltas}
+
+Timedeltas are differences in times, expressed in difference units. The Timedelta
+class in Pandas is a subclass of datetime.timedelta from the Python standard
+library. \\
+
+Similar to to\_datetime, there is a to\_timedelta function that can parse strings or
+lists of strings into Timedelta structures or TimedeltaIndices: \\
+
+pd.to\_timedelta('20.1s') \\
+
+Instead of absolute dates, we could create an index of timedeltas. Imagine measurements from a volcano, for example. We might want to take measurements but index it from a given date, for example the date of the last eruption. We could
+create a timedelta index that has the last seven days as entries: \\
+
+pd.to\_timedelta(np.arange(7), unit='D') \\
+
+We could then work with time series data, indexed from the last eruption. If we
+had measurements for many eruptions (from possibly multiple volcanos), we would
+have an index that would make comparisons and analysis of this data easier. For
+example, we could ask whether there is a typical pattern that occurs between the
+third day and the fifth day after an eruption. This question would not be impossible
+to answer with a DatetimeIndex, but a TimedeltaIndex makes this kind of
+exploration much more convenient. \\
+
+\subsection*{Time series plotting}
+
+We can overlay an aggregate plot over 2 and 5 years: \\
+
+ts.resample('2A').plot(c='0.75', ls='--') \\
+
+ts.resample('5A').plot(c='0.25', ls='-.') \\
+
+We can pass the kind of chart to the plot method as well. The return value of the
+plot method is an AxesSubplot, which allows us to customize many aspects of the
+plot. Here we are setting the label values on the X axis to the year values from our
+time series: \\
+
+tsx = ts.resample('1A') \\
+
+ax = tsx.plot(kind='bar', color='k') \\
+
+ax.set\_xticklabels(tsx.index.year) \\
+
+Let's imagine we have four time series that we would like to plot simultaneously. We generate a matrix of 1000 $\times$ 4 random values and treat each column as a separated time series: \\
+
+ts = pd.Series(np.random.randn(1000), index=pd.date\_range('1/1/2000', periods=1000)) \\
+df = pd.DataFrame(np.random.randn(1000, 4), index=ts.index, columns=['A', 'B', 'C', 'D']) \\
+
+df = df.cumsum() \\
+
+df.plot(color=['k', '0.75', '0.5', '0.25'], ls='--') \\
+
+
+\section{Interacting with Databases}
+
+There are numerous ways to store data. In this chapter, we are going to learn to
+interact with three main categories: text formats, binary formats and databases. We
+will focus on two storage solutions, MongoDB and Redis. MongoDB is a document-oriented database, which is easy to start with, since we can store JSON documents and do not need to define a schema upfront. Redis is a popular in-memory data structure store on top of which many applications can be built. It is possible to use Redis as a fast key-value store, but Redis supports lists, sets, hashes, bit arrays and even advanced data structures such as HyperLogLog out of the box as well. \\
+
+\subsection*{Reading data from text format}
+
+Pandas supports a number of functions for reading data from a text file into a
+DataFrame object. The most simple one is the read\_csv() function. Let's start with a
+small example file: \\
+
+In the above example file, each column is separated by comma and the first row is
+a header row, containing column names. To read the data file into the DataFrame
+object, we type the following command: \\
+
+df\_ex1 = pd.read\_csv('example\_data/ex\_06-01.txt') \\
+
+read\_csv function uses a comma as the default delimiter between columns in the text file and the first row is automatically used as a header for the columns. If we want to change this setting, we can use the sep parameter to change the separated symbol and set header=None in case the example file does not have a caption row. \\
+
+df\_ex2 = pd.read\_csv('example\_data/ex\_06-02.txt', sep = '\t', header=None)
+
+We can also set a specific row as the caption row by using the header that's equal to
+the index of the selected row. Similarly, when we want to use any column in the
+data file as the column index of DataFrame, we set index\_col to the name or index
+of the column. \\
+
+df\_ex3 = pd.read\_csv('example\_data/ex\_06-02.txt', sep = '\t', header=None, index\_col=0) \\
+
+[** read table at page 108 and page 109] \\
+
+In some situations, we cannot automatically parse data files from the disk using
+these functions. In that case, we can also open files and iterate through the reader, supported by the CSV module in the standard library: \\
+
+import csv ---> f = open('data/ex\_06-03.txt') ---> r = csv.reader(f, delimiter='\t') \\
+
+
+\subsection*{Writing data to text format}
+
+Corresponding to the read\_csv() function, we also have the to\_csv() function,
+supported by Pandas. Let's see an example below: \\
+
+df\_ex3.to\_csv('example\_data/ex\_06-02.out', sep = ';') \\
+
+If we want to skip the header line or index column when writing out data into a disk
+file, we can set a False value to the header and index parameters: \\
+
+df\_ex3.to\_csv(sys.stdout, sep='\t', header=False, index=False) \\
+
+We can also write a subset of the columns of the DataFrame to the file by specifying
+them in the columns parameter: \\
+
+df\_ex3.to\_csv(sys.stdout, columns=[3,1,4], header=False, sep='\t') \\
+
+
+[** Read the rest of the chapter! Binary, HDF5, MongoDB, Redis]
+
+
+\section{Data Analysis Application Examples}
+
+We could use whatever value is parseable as a float and throw away the rest with the
+convert\_objects method: \\
+
+df.height.convert\_objects(convert\_numeric=True) \\
+
+If we know in advance the undesirable characters in our data set, we can augment the read\_csv method with a custom converter function: \\
+
+remove\_stars = lambda s: s.replace("*", "") ---> df = pd.read\_csv("small.csv", names=["age", "height"], converters={"height": remove\_stars}) \\
+
+Now we can finally make the height column a bit more useful. We can assign it the
+updated version, which has the favored type: \\
+
+df.height = df.height.convert\_objects(convert\_numeric=True)
+
+
+\subsection*{Filtering}
+
+Even if we have clean and probably correct data, we might want to use only parts
+of it or we might want to check for outliers. An outlier is an observation point that is distant from other observations because of variability or measurement errors. \\
+
+\subsection*{Merging data}
+
+df1 = pd.DataFrame({'A': [1, 2, 3], 'B': [4, 5, 6]}) \\
+
+df2 = pd.DataFrame({'A': [4, 5, 6], 'B': [7, 8, 9]}) \\
+
+df1.append(df2) \\
+
+Sometimes, we won't care about the indices of the originating data frames: \\
+
+df1.append(df2, ignore\_index=True) \\
+
+A more flexible way to combine objects is offered by the pd.concat function, which
+takes an arbitrary number of series, data frames, or panels as input. The default
+behavior resembles an append: \\
+
+pd.concat([df1, df2]) \\
+
+The default concat operation appends both frames along the rows – or index, which
+corresponds to axis 0. To concatenate along the columns, we can pass in the axis
+keyword argument: \\
+
+pd.concat([df1, df2], axis=1) \\
+
+We can add keys to create a hierarchical index. \\
+
+pd.concat([df1, df2], keys=['UK', 'DE']) \\
+
+This can be useful if you want to refer back to parts of the data frame later. We use the ix indexer: \\
+
+df3 = pd.concat([df1, df2], keys=['UK', 'DE']) --->  df3.ix["UK"] \\
+
+\subsection*{Merge}
+
+If we merge on key, we get an inner join. \\
+
+df1.merge(df2, on='key') \\
+
+A left, right and full join can be specified by the how parameter: \\
+
+df1.merge(df2, on='key', how='left') \\
+
+df1.merge(df2, on='key', how='right') \\
+
+df1.merge(df2, on='key', how='outer') \\
+
+The merge methods can be specified with the how parameter. The following table
+shows the methods in comparison with SQL: \\
+
+[** See the how-option table at page 137] \\
+
+
+\subsection*{Reshaping data}
+
+If we want to calculate the maximum temperature per city, we could just group the
+data by city and then take the max function: \\
+
+df.groupby('city').max() \\
+
+However, if we have to bring our data into form every time, we could be a little more effective, by creating a reshaped data frame first, having the dates as an index and the cities as columns. We can create such a data frame with the pivot function. The arguments are the index (we use date), the columns (we use the cities), and the values (which are stored in the value column of the original data frame): \\
+
+pv = df.pivot("date", "city", "value") \\
+
+We can use max function on this new data frame directly: \\
+
+pv.max() \\
+
+For example, to find the maximum temperature per day, we can simply provide an additional axis argument: \\
+
+pv.max(axis=1) \\
+
+\subsection*{Data aggregation}
+
+This works on parts of the data as well. On certain data sets, it can be useful to group by more than one attribute. We can get an overview about the sunny hours per country and date by passing in two column names: \\
+
+df.groupby(["country", "date"]).describe() \\
+
+We can compute single statistics as well: \\
+
+df.groupby("city").mean() \\
+
+Finally, we can define any function to be applied on the groups with the agg method.
+The above could have been written in terms of agg like this: \\
+
+df.groupby("city").agg(np.mean) \\
+
+But arbitrary functions are possible. As a last example, we define a custom function, which takes an input of a series object and computes the difference between the smallest and the largest element: \\
+
+df.groupby("city").agg(lambda s: abs(min(s) - max(s))) \\
+
+
+\subsection*{Grouping data}
+
+The groups attributes return a dictionary containing the unique groups and
+the corresponding values as axis labels: \\
+
+df.groupby("city").groups \\
+
+Although the result of a groupby is a GroupBy object, not a DataFrame, we
+can use the usual indexing notation to refer to columns: \\
+
+grouped = df.groupby(["city", "value"]) \\
+
+grouped["value"].max() \\
+
+grouped["value"].sum() \\
+
+We see that, according to our data set, Mumbai seems to be a sunny city. An
+alternative – and more verbose – way to achieve the above would be: \\
+
+df['value'].groupby(df['city']).sum() \\
+
+
+\newpage
+
+\section{Getting Started with Predictive Modelling}
+
+\subsubsection*{Introducing predictive modelling}
+
+There are broadly two ways in which the data is used: \\
+
+\begin{itemize}
+	\item \textbf{Retrospective analytics:} This approach helps us analyze history and glean out insights from the data.
+	\item \textbf{Predictive analytics:} This approach unleashes the might of data. In short, this approach allows us to predict the future.
+\end{itemize}
+
+
+\subsection*{Ensemble of statistical algorithms}
+
+Statistics are the cog in the wheel called model. Algorithms, on the other hand, are the blueprints of a model. They are responsible for creating mathematical equations from the historical data. They analyze the data, quantify the relationship between the variables, and convert it into a mathematical equation. There is a variety of them: Linear Regression, Logistic Regression, Clustering, Decision Trees, Time-Series Modelling, Naïve Bayes Classifiers, Natural Language Processing, and so on. These models can be classified under two classes: \\
+
+\begin{itemize}
+	\item \textbf{Supervised algorithms}: These are the algorithms wherein the historical data has an output variable in addition to the input variables. The model makes use of the output variables from historical data, apart from the input variables. The examples of such algorithms include Linear Regression,
+	Logistic Regression, Decision Trees, and so on.
+	
+	\item \textbf{Un-supervised algorithms}:These algorithms work without an
+	output variable in the historical data. The example of such algorithms includes clustering.
+	 
+\end{itemize}
+
+
+\subsubsection{Task matrix for predictive modeling}
+
+The tasks involved in predictive modelling follows the Pareto principle. Around 80\%
+of the effort in the modelling process goes towards data cleaning and wrangling,
+while only 20\% of the time and effort goes into implementing the model and getting
+the prediction. However, the meaty part of the modelling that is rich with almost
+80\% of results and insights is undoubtedly the implementation of the model. \\
+
+\subsubsection*{Applications and examples of predictive modelling}
+
+\subsubsection*{LinkedIn's "People also viewed" feature}
+
+This probability comes under the ambit of a broad set of rules called \textbf{Association Rules}. 
+
+\subsubsection*{Correct targeting of online ads}
+
+The ultimate goal of an online ad is to be clicked on. Each instance of an ad display is called an impression. The number of clicks per impression is called \textbf{Click Through Rate} and is the single most important metric that the advertisers are interested in. The problem statement is to determine the list of publishers where the advertiser should publish its ads so that the Click Through Rate is the maximum. \\
+
+The logistical regression is one of the most standard classifiers for situations with binary outcomes. In banking, whether a person will default on his loan or not can be predicted using logistical regression given his credit history. \\
+
+\subsubsection*{Santa Cruz predictive policing}
+
+Based on the historical data consisting of the area and time window of the occurrence of a crime, a model was developed to predict the place and time where the next crime might take place. \\
+
+A decision tree model was created using the historical data. The prediction of
+the model will foretell whether a crime will occur in an area on a given date
+and time in the future. \\
+
+\subsubsection*{Determining the activity of a smartphone user using accelerometer data}
+
+Such columns can be found out using a technique called Singular Value Decomposition.
+
+\subsubsection*{Sport and fantasy leagues}
+
+
+\newpage
+
+\section{Data Cleaning}
+
+\subsection*{Treating missing values}
+
+\subsubsection*{Deletion}
+
+data.dropna(axis=0,how='all')\\
+
+The statement when executed will drop all the rows (axis=0 means rows, axis=1
+means columns) in which all the columns have missing values (the how parameter
+is set to all). One can drop a row even if a single column has a missing value. One
+needs to specify the how method as 'any' to do that: \\
+
+data.dropna(axis=0,how='any') \\
+
+\subsubsection*{Imputation}
+
+Imputation is the method of adding/replacing missing values with some other
+values such as 0, a string, or mean of non-missing values of that variable. \\
+
+One method is to fill the missing values in the entire dataset with some number or
+character variable. Thus, it can be done as follows: \\
+
+data.fillna(0) \\
+
+One can impute a character variable as well: \\
+
+data.fillna('missing') \\
+
+The preceding statement will impute a missing string in place of NaN, None, blanks,
+and so on. Another way is to replace the missing values in a particular column only \\
+
+data['body'].fillna(0) \\
+
+A common imputation is with the mean or median value of that column. \\
+
+data['age'].fillna(data['age'].mean()) \\
+
+One can use any function in place of mean, the most commonly used functions
+are median or some defined calculation using lambda. Apart from that, there are
+two very important methods in fillna to impute the missing values: ffill and
+backfill. As the name suggests, ffill replaces the missing values with the nearest
+preceding non-missing value while the backfill replaces the missing value with the
+nearest succeeding non-missing value. It will be clearer with the following example [see page 210]: \\
+
+data['age'].fillna(method='ffill') \\
+
+With the backfill statement, something similar happens: \\
+
+data['age'].fillna(method='backfill') \\
+
+
+\subsubsection*{Creating dummy variables}
+
+We can create two dummy variables out of this, as follows: \\
+
+dummy\_sex=pd.get\_dummies(data['sex'],prefix='sex')
+
+
+
+\newpage
+
+\section*{Statistical Concept for Predictive modelling}
+
+\subsubsection*{Z-statistic and t-statistic}
+
+\begin{itemize}
+	\item  \textbf{Z-test (normal distribution)}: The researcher knows the standard deviation for the parameter from his/her past experience. A good example of this is the case of pizza delivery time; you will know the standard deviation from past experiences:
+	\begin{equation*}
+	Z = (A_m - A_o)/(\sigma\sqrt{n})
+	\end{equation*}
+	Ao (from the null hypothesis) and n are known. Am is calculated from the
+	random sample. This kind of test is done when the standard deviation is
+	known and is called the \textbf{z-test} because the distribution follows the normal distribution and the standard-normal value obtained from the preceding
+	formula is called the \textbf{Z-value}.
+	
+	\item \textbf{t-test (Student-t distribution)}: The researcher doesn't know the standard deviation of the population. This might happen because there is no such data present from the historical experience or the number of people/event is very small to assume a normal distribution; hence, the estimation of mean and
+	standard deviation by the formula described earlier. An example of such a
+	case is a student's marks in an exam, age of a population, and so on. In this
+	case, the mean and standard deviation become unknown and the expression
+	assumes a distribution other than normal distribution and is called a
+	\textbf{Student-t} distribution. The standard value in this case is called \textbf{t-value} and the test is called \textbf{t-test}.
+\end{itemize}
+
+Standard distribution can also be estimated once the mean is estimated, if
+the number of samples is large enough. Let us call the estimated standard
+distribution S; then the S is estimated as follows: \\
+
+\begin{equation*}
+S = \sum (A_i-A_o)^2 / (n-1)
+\end{equation*}
+
+The t-statistic is calculated as follows:
+
+\begin{equation}
+t = (A_m - A_o) / (S/\sqrt{n})
+\end{equation}
+
+The difference between the two cases, as you can see, is the distribution they follow. The first one follows a normal distribution and calculates a Z-value. The second one follows a Student-t distribution and calculates a t-value. These statistics that is Z-statistics and t-statistics are the parameters that help us test our hypothesis. \\
+
+\subsubsection*{Confidence intervals, significance levels, and p-values}
+
+[** read this section for the book]
+
+
+\subsubsection*{Chi-square tests}
+
+The chi-square test is a statistical test commonly used to compare observed data with the expected data assuming that the data follows a certain hypothesis. In a sense, this is also a hypothesis test. You assume one hypothesis, which your data will follow and calculate the expected data according to that hypothesis. \\
+
+\begin{equation*}
+chisquare value(g) = \sum(E-O)^2/E
+\end{equation*}
+
+Where O is the observed value and E is the expected value while the summation is
+over all the data points. \\
+
+The chi-square test can be used to do the following things: \\
+
+\begin{itemize}
+	\item Show a causal relationship or independence between one input and output
+	variable. We assume that they are independent and calculate the expected
+	values. Then we calculate the chi-square value. If the null hypothesis
+	is rejected, it suggests a relationship between the two variables. The
+	relationship is not just by chance but statistically proven.
+	
+	\item Check whether the observed data is coming from a fair/unbiased source.
+	If the observed data is more skewed towards one extreme, compared to the
+	expected data, then it is not coming from a fair source. But, if it is very close to the expected value then it is.
+	
+	\item Check whether a data is too good to be true. As, it is a random experiment
+	and we don't expect the values to toe the assumed hypothesis. If they do toe
+	the assumed hypothesis, then the data has probably been tampered to make
+	it look good and is too good to be true.
+\end{itemize}
+
+\subsubsection*{Correlation}
+
+If x and y are two variables, which are correlated, then one can write:
+
+\begin{equation*}
+Y=f(x)
+\end{equation*}
+
+The degree of correlation between the two variables x and y is quantified by the
+following equation:
+
+\begin{equation*}
+correlation coefficient ( h ) = \frac{\sum((x-xm)*(y-ym))}{\sqrt{\sum(x-xm)^2*\sum(y-ym)^2}}
+\end{equation*}
+
+Where xm and ym are mean values of x and y. The value of the correlation coefficient can range from -1 to 1, that is -1<h<1. \\
+
+Although, a strong correlation suggests that there is some kind of a relationship
+that can be leveraged to predict one based on the other; it doesn't imply that its
+relation with the other variable is the only factor explaining this, there can be several others. Hence, the most often used quote related to correlation is, "\textit{Correlation doesn't imply causation}." \\
+
+We can summarize the pair-wise correlation coefficients between the variables in the
+following table: [** see table at page 301.] This table is called \textbf{Correlation Matrix}.\\
+
+
+\newpage
+
+\section*{Treea and Random Forests with Python}
+
+A decision tree can be thought of as a set of if-then rules for a classification problem where the target variables are discrete or categorical variables. The if-then rules are represented as a tree. 
+
+\subsection*{Introducing decision trees}
+
+A tree has three basic elements: nodes, branches, and leaves. Nodes are the points from where one or more branches come out. A node from where no branch originates is a leaf. A typical tree looks as follows [** see picture 8.1 on page 438 ].  All
+nodes, except the terminal node, represent one variable and the branches represent
+the different categories (values) of that variable. The terminal node represents the
+final decision or value for that route. \\
+
+The numerical variables can very well be used as predictor variables. However, the numerical variables are not the most preferred variables for a decision tree, as they lose some information while they are categorized into groups to be used in a decision tree algorithm. A decision tree is advantageous because it is easier to understand and doesn't require a lot of data cleaning in the sense that it is not influenced by missing values and outliers that much. \\
+
+\subsection*{Homogeneity}
+
+Homogeneity means more similar things together or, in other words, fewer dissimilar things together. This is because Low rainfall was able to group more of the Meagre rainfall (71\%) together than the classes in the Terrain parameter. For the Fertilizers and Groundwater parameters, the highest homogeneity that can be achieved is 67\%. \\
+
+identified as concrete decisions, is the ultimate goal in decision tree algorithms.
+Identifying the variable that results in the best homogeneous classification can be
+done in many ways. There are multiple algorithms available to do this. Let us take a
+look at some of them.
+
+\subsubsection*{Entropy}
+
+One interpretation of entropy (from information theory) is the minimum number of bits required to encode the classification of an arbitrary member of the set. 
+
+\begin{equation*}
+Entropy(S) = \sum-p_i\log_2p_i
+\end{equation*}
+
+Here, the summation is over different categories of the target variable. $P_i$ is the proportion (over the total number of observations) of the $i^{th}$ particular category of the target variable.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}

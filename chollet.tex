@@ -1,0 +1,497 @@
+\documentclass{article}
+
+%\usepackage{amsfonts}
+\usepackage{amsmath}
+
+\usepackage[dvipsnames]{xcolor}
+\numberwithin{equation}{section} % to change the numbering of the section from x to x.y
+
+\begin{document}
+
+\section{What is deep learning?}
+
+\subsubsection{Artificial intelligence}
+
+A concise definition of the field would be as follows: \textit{the effort to automate intellectual tasks normally performed by humans}. For a fairly long time, many experts believed that human-level artificial intelligence could be achieved by having programmers handcraft a sufficiently large set of explicit rules for manipulating knowledge. This approach is known as symbolic AI, and it was the dominant paradigm in AI from the 1950s to the late 1980s. It reached its peak popularity during the expert systems boom of the 1980s. Although symbolic AI proved suitable to solve well-defined, logical problems, such as playing chess, it turned out to be intractable to figure out explicit rules for solving more complex, fuzzy problems, such as image classification, speech recognition, and language translation. A new approach arose to take symbolic AI ’s place: \textit{machine learning}. \\
+
+\subsubsection{Machine learning}
+
+With machine learning, humans input data as well as the answers expected from the data, and out come the rules. These rules can then be applied to new data to produce original answers. \\
+
+Although machine learning only started to flourish in the 1990s, it has quickly
+become the most popular and most successful subfield of AI, a trend driven by the
+availability of faster hardware and larger datasets. Machine learning is tightly related to mathematical statistics, but it differs from statistics in several important ways. Unlike statistics, machine learning tends to deal with large, complex datasets (such as a dataset of millions of images, each consisting of tens of thousands of pixels) for which classical statistical analysis such as Bayesian analysis would be impractical. As a result, machine learning, and especially deep learning, exhibits comparatively little mathematical theory—maybe too little—and is engineering oriented. It’s a hands-on discipline in which ideas are proven empirically more often than theoretically. \\
+
+\subsubsection{Learning representations from data}
+
+To do machine learning, we need three things: \\
+
+\begin{itemize}
+	\item Input data points
+	\item Examples of the expected output
+	\item A way to measure whether the algorithm is doing a good job:  This adjustment step is what we call \textit{learning}.
+\end{itemize}
+
+Therefore, the central problem in machine learning and deep learning is to \textit{meaningfully transform data}. Machine-learning models are all about finding appropriate representations for their input data. \textit{Learning}, in the context of machine learning, describes an automatic search process for better representations. Machine-learning algorithms aren’t usually creative in finding these transformations; they’re merely searching through a predefined set of
+operations, called a \textit{hypothesis space}. So that’s what machine learning is, technically: searching for useful representations of some input data, within a predefined space of possibilities, using guidance from a feedback signal. This simple idea allows for solving a remarkably broad range of intellectual tasks, from speech recognition to autonomous car driving. Now that you understand what we mean by \textit{learning}, let’s take a look at what makes \textit{deep learning} special. \\
+
+
+\subsubsection{The “deep” in deep learning}
+
+Deep learning is a specific subfield of machine learning: a new take on learning representations from data that puts an emphasis on learning successive \textit{layers} of increasingly meaningful representations. The \textit{deep} in \textit{deep learning} isn’t a reference to any kind of deeper understanding achieved by the approach; rather, it stands for this idea of successive layers of representations. How many layers contribute to a model of the data is called the \textit{depth} of the model. \\
+
+Meanwhile, other approaches to machine learning tend to focus on learning only one or two layers of representations of the data; hence, they’re sometimes called \textit{shallow learning}. \\
+
+In deep learning, these layered representations are (almost always) learned via
+models called \textit{neural networks}, structured in literal layers stacked on top of each other. The term \textit{neural network} is a reference to neurobiology, but although some of the central concepts in deep learning were developed in part by drawing inspiration from our understanding of the brain, deep-learning models are \textit{not} models of the brain. \\
+
+You can think of a deep network as a multistage information-distillation operation, where information goes through successive filters and comes out increasingly \textit{purified} (that is, useful with regard to some task). \\
+
+So that’s what deep learning is, technically: a multistage way to learn data representations. It’s a simple idea—but, as it turns out, very simple mechanisms, sufficiently scaled, can end up looking like magic. \\
+
+\subsubsection{Understanding how deep learning works, in three figures}
+
+The specification of what a layer does to its input data is stored in the layer’s
+\textit{weights}, which in essence are a bunch of numbers. In technical terms, we’d say that the transformation implemented by a layer is \textit{parameterized} by its weights (see figure 1.7). (Weights are also sometimes called the \textit{parameters} of a layer.) In this context, \textit{learning} means finding a set of values for the weights of all layers in a network, such that the network will correctly map example inputs to their associated targets. \\
+
+To control the output of a neural network, you need to be able to measure how far this output is from what you expected. This is the job of the \textit{loss function} of the network, also called the \textit{objective function}. The loss function takes the predictions of the network and the true target (what you wanted the network to output) and computes a distance score, capturing how well the network has done on this specific example (see figure 1.8). \\
+
+The fundamental trick in deep learning is to use this score as a feedback signal to
+adjust the value of the weights a little, in a direction that will lower the loss score for the current example (see figure 1.9). This adjustment is the job of the \textit{optimizer}, which implements what’s called the \textit{Backpropagation} algorithm: the central algorithm in deep learning. \\
+
+\subsection{Before deep learning: a brief history of machine learning}
+
+\subsubsection{Probabilistic modeling}
+
+Naive Bayes is a type of machine-learning classifier based on applying Bayes’ theo-
+rem while assuming that the features in the input data are all independent (a strong, or “naive” assumption, which is where the name comes from). \\
+
+\subsubsection{Kernel methods}
+
+The technique of mapping data to a high-dimensional representation where a classifi-
+cation problem becomes simpler may look good on paper, but in practice it’s often computationally intractable. That’s where the kernel trick comes in (the key idea
+that kernel methods are named after). Here’s the gist of it: to find good decision
+hyperplanes in the new representation space, you don’t have to explicitly compute
+the coordinates of your points in the new space; you just need to compute the distance between pairs of points in that space, which can be done efficiently using a \textit{kernel function}. A kernel function is a computationally tractable operation that maps any two points in your initial space to the distance between these points in your target representation space, completely bypassing the explicit computation of the new representation. \\
+
+Because an SVM is a shallow method, applying an SVM to perceptual problems requires first extracting useful representations manually (a step called \textit{feature engineering}), which is difficult and brittle. \\
+
+\subsubsection{Decision trees, random forests, and gradient boosting machines}
+
+Decisions trees learned from data began to receive significant research interest
+in the 2000s, and by 2010 they were often preferred to kernel methods. In particular, the Random Forest algorithm introduced a robust, practical take on
+decision-tree learning that involves building a large number of specialized decision
+trees and then ensembling their outputs. Random forests are applicable to a wide
+range of problems—you could say that they’re almost always the second-best algorithm
+for any shallow machine-learning task. When the popular machine-learning competition website Kaggle (http://kaggle.com) got started in 2010, random forests quickly became a favorite on the platform—until 2014, when \textit{gradient boosting machines} took over. A gradient boosting machine, much like a random forest, is a machine-learning technique based on ensembling weak prediction models, generally decision trees. It uses \textit{gradient boosting}, a way to improve any machine-learning model by iteratively training new models that specialize in addressing the weak points of the previous models. Applied to decision trees, the use of the gradient boosting technique results in models that strictly outperform random forests most of the time, while having similar properties. It may be one of the best, if not \textit{the} best, algorithm for dealing with nonperceptual data today. Alongside deep learning, it’s one of the most commonly used techniques in Kaggle competitions. \\
+
+\subsubsection{Back to neural networks}
+
+Since 2012, deep convolutional neural networks (\textit{convnets}) have become the go-to algorithm for all computer vision tasks; more generally, they work on all perceptual tasks.  It has completely replaced SVMs and decision trees in a
+wide range of applications. For instance, for several years, the European Organization for Nuclear Research, CERN, used decision tree–based methods for analysis of particle data from the ATLAS detector at the Large Hadron Collider (LHC); but CERN eventually switched to Keras-based deep neural networks due to their higher performance and ease of training on large datasets. \\
+
+\subsubsection{What makes deep learning different}
+
+The primary reason deep learning took off so quickly is that it offered better performance on many problems. But that’s not the only reason. Deep learning also makes problem-solving much easier, because it completely automates what used to be the most crucial step in a machine-learning workflow: feature engineering. \\
+
+Humans had to manually engineer good layers of representations for their data. This is called feature engineering. if the crux of the issue is to have multiple successive layers of representations, could shallow methods be applied repeatedly to emulate the effects of deep learning? In practice, there are fast-diminishing returns to successive applications of shallow-learning methods, because \textit{the optimal first representation layer in a three layer model isn’t the optimal first layer in a one-layer or two-layer model}. What is transformative about deep learning is that it allows a model to learn all layers of representation
+jointly, at the same time, rather than in succession (greedily, as it’s called). With joint feature learning, whenever the model adjusts one of its internal features, all other features that depend on it automatically adapt to the change, without requiring human intervention. Everything is supervised by a single feedback signal: every change in the model serves the end goal. \\
+
+These are the two essential characteristics of how deep learning learns from data:
+the \textit{incremental, layer-by-layer way in which increasingly complex representations are developed}, and the fact that \textit{these intermediate incremental representations are learned jointly}, each layer being updated to follow both the representational needs of the layer above and the needs of the layer below. Together, these two properties have made deep learning vastly more successful than previous approaches to machine learning. \\
+
+\subsubsection{The modern machine-learning landscape}
+
+In 2016 and 2017, Kaggle was dominated by two approaches: gradient boosting
+machines and deep learning. Specifically, gradient boosting is used for problems
+where structured data is available, whereas deep learning is used for perceptual problems such as image classification. Practitioners of the former almost always use the excellent XGBoost library, which offers support for the two most popular languages of data science: Python and R. Meanwhile, most of the Kaggle entrants using deep learning use the Keras library, due to its ease of use, flexibility, and support of Python. These are the two techniques you should be the most familiar with in order to be successful in applied machine learning today: gradient boosting machines, for shallow-learning problems; and deep learning, for perceptual problems. In technical terms, this means you’ll need to be familiar with XGBoost and Keras—the two libraries that currently dominate Kaggle competitions. With this book in hand, you’re already one big step closer.
+
+
+\newpage
+
+\section{Before we begin: the mathematical building blocks of neural networks}
+
+\subsection{A first look at a neural network}
+
+We’ll use the MNIST dataset, a classic in the machine-learning community, which has been around almost as long as the field itself and has been intensively studied. It’s a set of 60,000 training images, plus 10,000 test images, assembled by the National Institute of Standards and Technology (the NIST in MNIST) in the 1980s. \\
+
+In machine learning, a category in a classification problem is called a class. Data
+points are called samples. The class associated with a specific sample is called a
+label. \\
+
+\subsection{Data representations for neural networks}
+
+Tensors are a generalization of matrices to an arbitrary number of dimensions
+(note that in the context of tensors, a dimension is often called an axis). \\
+
+\subsubsection{Scalars (0D tensors)}
+
+A tensor that contains only one number is called a scalar (or scalar tensor, or 0-dimensional tensor, or 0D tensor). In Numpy, a float32 or float64 number is a scalar tensor (or scalar array). You can display the number of axes of a Numpy tensor via the ndim attribute; a scalar tensor has 0 axes (ndim == 0 ). The number of axes of a tensor is also called its rank. \\
+
+\subsubsection{Vectors (1D tensors)}
+
+An array of numbers is called a vector, or 1D tensor. A 1D tensor is said to have exactly one axis. Don’t confuse a 5D vector with a 5D tensor! A 5D vector has only one axis and has five dimensions along its axis, whereas a 5D tensor has five axes (and may have any number of dimensions along each axis). Dimensionality can denote either the number of entries along a specific axis (as in the case of our 5D vector) or the number of axes in a tensor (such as a 5D tensor), which can be confusing at times. In the latter case, it’s technically more correct to talk about a tensor of rank 5 (the rank of a tensor being the number of axes), but the ambiguous notation 5D tensor is common regardless. \\
+
+\subsubsection{Matrices (2D tensors)}
+
+An array of vectors is a matrix, or 2D tensor. A matrix has two axes (often referred to rows and columns). You can visually interpret a matrix as a rectangular grid of numbers. The entries from the first axis are called the rows, and the entries from the second axis are called the columns. \\
+
+\subsubsection{3D tensors and higher-dimensional tensors}
+
+If you pack such matrices in a new array, you obtain a 3D tensor, which you can visually interpret as a cube of numbers. By packing 3D tensors in an array, you can create a 4D tensor, and so on. In deep learning, you’ll generally manipulate tensors that are 0D to 4D, although you may go up to 5D if you process video data. \\
+
+\subsubsection{The notion of data batches}
+
+When considering such a batch tensor, the first axis (axis 0) is called the \textbf{batch axis} or \textbf{batch dimension}.
+
+\subsubsection{Real-world examples of data tensors}
+
+The data you’ll manipulate will almost always fall into one of the following categories: \\
+
+\begin{itemize}
+	\item \textit{Vector data}--\textbf{2D tensors of shape} (samples, features)
+	\item \textit{Timeseries data or sequence data}--\textbf{3D tensors of shape} (samples, timesteps, features)
+	\item \textit{Images}--\textbf{4D tensors of shape} (samples, height, width, channels) or (samples, channels, height, width)
+	\item \textit{Video}--\textbf{—5D tensors of shape} (samples, frames, height, width, channels) or (samples, frames, channels, height, width)
+\end{itemize}
+
+\subsubsection{Vector data}
+
+This is the most common case. In such a dataset, each single data point can be encoded as a vector, and thus a batch of data will be encoded as a 2D tensor (that is, an array of vectors), where the first axis is the \textit{samples axis} and the second axis is the \textit{features axis}. 
+
+\subsubsection{Timeseries data or sequence data}
+
+The time axis is always the second axis (axis of index 1), by convention.
+
+
+\subsection{The gears of neural networks: tensor operations}
+
+\subsubsection{Tensor reshaping}
+
+A special case of reshaping that’s commonly encountered is \textit{transposition}. \textit{Transposing} a matrix means exchanging its rows and its columns, so that x[i, :] becomes x[:, i] \\
+
+\subsection{The engine of neural networks: gradient-based optimization}
+
+In this expression, W and b are tensors that are attributes of the layer. They’re called the \textit{weights} or \textit{trainable parameters} of the layer (the kernel and bias attributes, respectively). These weights contain the information learned by the network from exposure to training data. \\
+
+Initially, these weight matrices are filled with small random values (a step called random initialization). The resulting representations are meaningless—but they’re a starting point. What comes next is to gradually adjust these weights, based on a feedback signal. This gradual adjustment, also called \textit{training}, is basically the learning that machine learning is all about. \\
+
+This happens within what’s called a \textit{training loop}, which works as follows. Repeat these steps in a loop, as long as necessary:
+
+\begin{enumerate}
+	\item Draw a batch of training samples x and corresponding targets y.
+	\item Run the network on x (a step called the forward pass) to obtain predictions y\_pred .
+	\item Compute the loss of the network on the batch, a measure of the mismatch
+	between y\_pred and y .
+	\item Update all weights of the network in a way that slightly reduces the loss on this batch.
+\end{enumerate}
+
+You’ll eventually end up with a network that has a very low loss on its training data: a low mismatch between predictions y\_pred and expected targets y. Given an individual weight coefficient in the network, how can you compute whether the coefficient should be increased or decreased, and by how much? \\
+
+A much better approach is to take advantage of the fact that all operations used in the network are \textit{differentiable}, and compute the \textit{gradient} of the loss with regard to the network’s coefficients. \\
+
+
+\subsubsection{Derivative of a tensor operation: the gradient}
+
+A gradient is the derivative of a tensor operation. It’s the generalization of the concept of derivatives to functions of multidimensional inputs: that is, to functions that take tensors as inputs. \\
+
+That tensor gradient(f)(W0) is the gradient of the function f(W) = loss\_value in W0. You saw earlier that the derivative of a function f(x) of a single coefficient can be interpreted as the slope of the curve of f. Likewise, gradient(f)(W0) can be interpreted as the tensor describing the \textit{curvature} of f(W) around W0. \\
+
+\subsubsection{Stochastic gradient descent}
+
+it’s known that a function’s minimum is a point where the derivative is 0, so all
+you have to do is find all the points where the derivative goes to 0 and check for which of these points the function has the lowest value. Applied to a neural network, that means finding analytically the combination of weight values that yields the smallest possible loss function. This can be done by solving the equation gradient(f)(W) = 0 for W.  If you update the weights in the opposite direction from the gradient, the loss will be a little less every time:
+
+\begin{enumerate}
+	\item Draw a batch of training samples x and corresponding targets y.
+	\item Run the network on x to obtain predictions y\_pred.
+	\item  Compute the loss of the network on the batch, a measure of the mismatch
+	between y\_pred and y .
+	\item Compute the gradient of the loss with regard to the network’s parameters (a \textit{backward pass}).
+	\item Move the parameters a little in the opposite direction from the gradient—for example W -= step * gradient—thus reducing the loss on the batch a bit.
+\end{enumerate}
+
+What I just described is called \textit{mini-batch stochastic gradient descent} (mini-batch SGD). The term \textit{stochastic} refers to the fact that each batch of data is drawn at random (\textit{stochastic} is a scientific synonym of \textit{random}). \\
+
+
+\subsubsection{Chaining derivatives: the Backpropagation algorithm}
+
+Applying the chain rule to the computation of the gradient values of a neural network gives rise to an algorithm called \textit{Backpropagation} (also sometimes called \textit{reverse-mode differentiation}). Backpropagation starts with the final loss value and works backward from the top layers to the bottom layers, applying the chain rule to compute the contribution that each parameter had in the loss value.
+
+
+
+\newpage
+
+\section{Getting started with neural networks}
+
+\subsection{Anatomy of a neural network}
+
+Training a neural network revolves around the following objects:
+
+\begin{itemize}
+	\item \textit{Layers}, which are combined into a \textit{network} (or \textit{model})
+	\item The \textit{input data} and corresponding \textit{targets}
+	\item The \textit{loss function}, which defines the feedback signal used for learning
+	\item The \textit{optimizer}, which determines how learning proceeds
+\end{itemize}
+
+
+\subsubsection{Layers: the building blocks of deep learning}
+
+Simple vector data, stored in 2D tensors of shape (samples, features), is often processed by densely connected layers, also called fully connected or dense layers (the Dense class in Keras). Sequence data, stored in 3D tensors of shape (samples,
+timesteps, features), is typically processed by recurrent layers such as an LSTM layer. Image data, stored in 4D tensors, is usually processed by 2D convolution layers (Conv2D). \\
+
+The notion of \textit{layer compatibility} here refers specifically to the fact that every layer will only accept input tensors of a certain shape and will return output tensors of a certain shape. \\
+
+\subsubsection{Models: networks of layers}
+
+Some common network topologies include the following:
+
+\begin{itemize}
+	\item Two-branch networks
+	\item Multihead networks
+	\item Inception blocks
+\end{itemize}
+
+The topology of a network defines a \textit{hypothesis space}. Picking the right network architecture is more an art than a science; and although there are some best practices and principles you can rely on, only practice can help you become a proper neural-network architect. \\
+
+
+\subsubsection{Loss functions and optimizers: keys to configuring the learning process}
+
+A neural network that has multiple outputs may have multiple loss functions (one per
+output). But the gradient-descent process must be based on a \textit{single} scalar loss value; so, for multiloss networks, all losses are combined (via averaging) into a single scalar quantity. Just remember that all neural networks you build will be just as ruthless in lowering their loss function—so choose the objective wisely, or you’ll have to face unintended side effects. \\
+
+Fortunately, when it comes to common problems such as classification, regression,
+and sequence prediction, there are simple guidelines you can follow to choose the
+correct loss. For instance, you’ll use binary crossentropy for a two-class classification problem, categorical crossentropy for a many-class classification problem, mean-squared error for a regression problem, connectionist temporal classification (CTC) for a sequence-learning problem, and so on. Only when you’re working on truly new research problems will you have to develop your own objective functions. \\
+
+\subsection{Introduction to Keras}
+
+\subsubsection{Developing with Keras: a quick overview}
+
+There are two ways to define a model: using the Sequential class (only for linear
+stacks of layers, which is the most common network architecture by far) or the func-
+tional API (for directed acyclic graphs of layers, which lets you build completely arbitrary architectures).
+
+
+\subsection{Setting up a deep-learning workstation}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}
