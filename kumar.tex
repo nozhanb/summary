@@ -957,39 +957,177 @@ numerical variable. The weighed variance is calculated for each variable. The va
 
 \subsection*{Pruning a tree}
 
+A common strategy to overcome this situation is to first allow the tree to grow until the nodes have the minimum number of instances under them and then prune the
+tree to remove the branches or nodes that don't provide a lot of classification power to the tree. This procedure is called pruning a decision tree and can be done in both a bottom-up and top-down fashion. The following are a few methods that are used to do this: 
+
+\begin{itemize}
+	\item \textbf{Reduced error pruning}: It is a naïve top-down approach for pruning a tree. Starting from the terminal nodes or the leaves, each node is replaced with its most popular category. If the accuracy of the tree is not affected, the replacements are put into effect.
+	\item \textbf{Cost complexity pruning}:This method generates a set of trees, T0, T1,...,Tn,where T0 is the unpruned tree and Tn is just the root node. The Ti tree is created by replacing a subtree of the Ti-1 tree with one of the leaf nodes (selecting the leaf node is done using either of the algorithms explained
+	above). The subtree to be replaced is chosen as follows: 
+	
+\end{itemize}
+
+\begin{enumerate}
+	\item Define an error rate for a decision tree T over a dataset D as err(T,D).
+	\item The number of terminal nodes or leaves in a decision tree T is given
+	by leaves (T). A decision tree T from which a subtree t has been
+	pruned is denoted by prune(T,t).
+	\item Define a function M, where M=[err(prune(T,t),D)-err(T,D)]/
+	[|leaves(T)|-|leaves(prune(T,t))|].
+	\item Calculate M for all the candidate subtrees.
+	\item The subtree that minimizes the M is chosen for removal.
+\end{enumerate}
 
 
+\subsubsection*{Handling a continuous numerical variable}
+
+The algorithms we have discussed to choose a subnode and grow the tree, all require a categorical variable. How do we then use continuous numerical variables to create a decision tree? The answer is by defining thresholds for the continuous numerical variable, based on which the variable will be categorized in several classes dynamically.
+
+\subsubsection*{Handling a missing value of an attribute}
+
+Some of the approaches that can be used to handle the missing values while creating
+a decision tree are as follows:
+
+\begin{itemize}
+	\item Assign the most common (highest frequency) category of that variable to
+	the missing value.
+	\item Assign the most common (highest frequency) category of that variable
+	among all the observations that have the same class of the target variable
+	to the missing value.
+\end{itemize}
 
 
+\subsection*{Visualizing the tree}
+
+In scikit-learn, there are the following four steps to visualize a tree:
+
+\begin{enumerate}
+	\item Creating a .dot file from the Decision Tree Classifier model that is fit for the data.
+	\item In Python, this can be done using the export\_graphviz module in the
+	sklearn package. A .dot file contains information necessary to draw a tree. This information includes the entropy value (or Gini) at that node, the number of observations in that node, the condition referring to that node, and the node number pointing to another node number denoting which node is connected next to which one [** See page 456 for an example].
+	\item Rendering a .dot file into a tree: 
+	This can be done using the system module of the os package that is used to
+	run the cmd commands from within Python. This is done as follows:
+	[See page 456 for an example.]	
+\end{enumerate}
+
+[** see page 457 for a detailed example!]
 
 
+\subsection*{Cross-validating and pruning the decision tree}
+
+[** see page 458]
 
 
+\subsection*{Understanding and implementing regression trees}
+
+An algorithm very similar to decision trees is regression tree. The difference
+between the two is that the target variable in the case of a regression tree is a
+continuous numerical variable, unlike decision trees where the target variable
+is a categorical variable. A stepwise summary of the regression tree algorithm is as follows:
+
+\begin{enumerate}
+	\item Start with a single node, that is, all the observations, calculate the mean, and then the variance of the target variable.
+	\item Calculate the reduction in variance caused by each of the variables that are potential candidates for being the next node, using the approach described
+	earlier in this chapter. Choose the variable that provides the maximum reduction in the variance as the node.
+	\item For each leaf node, check whether the maximum reduction in the variance
+	provided by any of the variables is less than a set threshold, or the number
+	of observations in a given node is less than a set threshold. If one of these
+	criterions is satisfied, stop. If not, repeat step 2.
+\end{enumerate}
 
 
+\subsection*{Understanding and implementing random forests}
+
+Random forests is a predictive algorithm falling under the ambit of ensemble
+learning algorithms. Ensemble learning algorithms consist of a combination of
+various independent models (similar or different) to solve a particular prediction
+problem. The final result is calculated based on the results from all these
+independent models, which is better than the results of any of the independent models. There are two kinds of ensemble algorithm, as follows:
+
+\begin{itemize}
+	\item Averaging methods: Several similar independent models are created (in
+	the case of decision trees, it can mean trees with different depths or trees
+	involving a certain variable and not involving the others, and so on.) and the
+	final prediction is given by the average of the predictions of all the models.
+	\item Boosting methods: The goal here is to reduce the bias of the combined
+	estimator by sequentially building it from the base estimators. A powerful
+	model is created using several weak models.
+\end{itemize}
+
+Random forest, as the name implies, is a collection of classifier or regression trees. A random forest algorithm creates trees at random and then averages the predictions (random forest is an averaging method of ensemble learning) of these trees.
 
 
+\subsubsection*{Why do random forests work?}
+
+Random forests do a better job of making predictions because they average the
+outputs from an ensemble of trees. This maximizes the variance reduction. Also,
+taking a random sample of the predictors to create a tree makes the tree independent
+of the other trees (as they are not necessarily using the same predictors, even if using similar datasets). \\
+
+Random forest is one of the algorithms where all the variables of a dataset are
+optimally utilized. In most machine learning algorithms, we select a bunch of
+variables that are the most important for an optimal prediction. However, in the case of random forest, because of the random selection of the variables and also because the final outputs in a tree are calculated at the local partitions where some of the variables that are not important globally might become significant, each variable is utilized to its full potential. Thus, the entire data is more optimally used. This helps in reducing the bias arising out of dependence on only a few of the predictors.
 
 
+\subsubsection{Important parameters for random forests}
+
+The following are some of the important parameters for random forests that help in
+fine-tuning the results of the random forest models:
+
+\begin{itemize}
+	\item \textbf{Node size}: The trees in random forests can have very few observations in their leaf node, unlike the decision or regression trees. The trees in a random forest are allowed to grow without pruning. The goal is to reduce the bias as much as possible. This can be specified by the min\_samples\_leaf parameter of the RandomForestRegressor.
+	\item \textbf{Number of trees}: The number of trees in a random forest is generally set to a large number around 500. It also depends on the number of observations and columns in the dataset. This can be specified by the n\_estimators parameter of the RandomForestRegressor.
+	\item \textbf{Number of predictors sampled}: This is an important tuning parameter determining how the tree grows independently and unbiased. Generally, it should range between 2 to 5.
+\end{itemize}
 
 
+\newpage
+
+\section*{Best Practices for Predictive Modelling}
+
+\subsubsection*{Best practices for algorithms}
+
+The decision for the best-suited algorithm is usually taken based on the following two requirements:
+
+\begin{itemize}
+	\item Sometimes, the user of the result is interested only in the accuracy of the results. In such cases, the choice of the algorithm is done based on the
+	accuracy of the algorithms. All the qualifying models are run and the one with the maximum accuracy is finalized.
+	\item At other times, the user is interested in knowing the details of the algorithms as well. In such cases, the complexity of the algorithm also becomes a concern. The selected algorithms shouldn't be too complex to explain
+	to the user and should also be decently accurate.
+\end{itemize}
+
+[** See table at page 480]
+
+\subsection*{Best practices for statistics}
+
+Statistics are important because they help us gauge the efficiency of a model. Each predictive model generates a set of statistics, which suggests how good the model is and how the model can be fine-tuned to perform better. The following is a summary of the most widely reported statistics and their desired values for the predictive models described in this book:\\
+
+[** See the table at page 481] \\
+
+While reporting the results of a predictive model, the value of these statistics and
+its meaning in the business context should be stated explicitly. A brief and lucid
+explanation of the relevance and significance of the statistic is appreciated. Report the best values (most optimum value attainable) of these statistics. The model should be fine-tuned based on the value of these statistics until the point that they can't be further improved. \\
+
+Apart from these statistics, there are various statistical tests that can be performed over the dataset to test certain hypothesis about the data before fitting any predictive model to it. These tests include Z-test, t-test, chi-square test, ANOVA, and so on. If such tests have been performed, the results (value and significance) and their implications should be clearly stated. \\
 
 
+\subsection*{Best practices for business contexts}
 
+If it is a customer segmentation problem, mention the names and characteristics
+of the segments identified along with the statistical summary for each segment.
+Recommend a plan to maximize sales and revenue (or whatever the business
+objective might be) for each of the segments. \\
 
+If it is a regression/prediction/forecasting problem, mention the accuracy of the
+results along with a summary of the results. For example, the expected number of
+house sales in the coming year is around t (say 900K), according to the model. The
+accuracy of the model is a\% (say 98.5\%). \\
 
+Don't write in paragraphs. Write in bullet points. Add relevant plots and graphs to
+summarize the results. \\
 
-
-
-
-
-
-
-
-
-
-
-
+Tables are a great way to summarize a lot of information in a small space. Use a lot of them. Screenshots are also a great way to show results as they are quite widely used. Assumptions, if any, should be clearly stated. \\
 
 
 
