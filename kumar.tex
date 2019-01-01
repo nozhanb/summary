@@ -1130,24 +1130,65 @@ summarize the results. \\
 Tables are a great way to summarize a lot of information in a small space. Use a lot of them. Screenshots are also a great way to show results as they are quite widely used. Assumptions, if any, should be clearly stated. \\
 
 
+\newpage
+
+\section{LogisticRegression with Python}
+
+\subsection*{Linear regression versus logistic regression}
+
+One thing to note about the linear regression model is that the output variable is
+always a continuous variable. In other words, linear regression is a good choice
+when one needs to predict continuous numbers. However, what if the output variable is a discrete number. What if we want to classify our records in two or more categories? \\
+
+Logistic regression is a variation of linear regression where the output variable is a binary or categorical variable. The two regressions are similar in the sense that they both assume a linear relationship between the predictor and output variables. However, as we will see soon, the output variable needs to undergo some transformation in the case of logistic regression.
+
+[** See the table on page 364]
+
+\subsection*{Contingency tables}
+
+A contingency table is basically a representation of the frequency of observations
+falling under various categories of two or more variables. It comes in a matrix
+form and essentially contains the frequency of occurrences for the combination of
+categories of two or more variables. \\
+
+Rather than calculating numbers, one can calculate the proportions as well. \\
+
+contingency\_table.astype('float').div(contingency\_table.sum(axis=1),axis=0) \\
 
 
+Creating a contingency table is a first step towards exploring the data that has a
+binary outcome variable and categorical predictor variable. \\
+
+\subsection*{Conditional probability}
+
+Conditional probability basically defines the probability of a certain event happening, given that a certain related event is true or has already happened. The conditional probability of a purchase, given the customer is male, is denoted as follows: \\
+
+Probability( Purchase / Male) = $\frac{Total number of purchases by males
+}{Total number of males in the group}$
 
 
+\subsection*{Odds ratio}
 
+The odds ratio is a ratio of odds of success (purchase in this case) for each group
+(male and female in this case). Odds of success for a group are defined as the ratio of probability of successes (purchases) to the probability of failures (non-purchases). In our case, the odds of the purchase for the group of males and females can be defined as follows: \\
 
+Odds of purchase by males = $\frac{P_m}{(1 - P_m )}$ \\
 
+Odds of purchase by females =  $\frac{P_f}{(1-P_f)}$ \\
 
+Here, Pm=probability of purchase by males and Pf=probability of purchase by females. Or in a more general form: \\
 
+Odds of success for males = $N_sm$ / $N_fm$ \\
 
+Odds of success for females = $N_sf$ / $N_ff$ \\
 
+Here, Ns=number of successes in that group and Nf=number of failures in that group. 
 
-
-
-
-
-
-
+\begin{itemize}
+	\item If the odds of success for a group is more than 1, then it is more likely for that group to be successful. The higher the odds, the better the chances of success.
+	\item If the odds of success is less than 1, then then it is more likely to get a failure. The lower the odds, the higher the chances of failure.
+	\item The odds can range from 0 to infinity.
+\end{itemize}
 
 
 
