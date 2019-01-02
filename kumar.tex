@@ -1191,14 +1191,24 @@ Here, Ns=number of successes in that group and Nf=number of failures in that gro
 \end{itemize}
 
 
+\subsection*{Moving on to logistic regression from linear regression}
+
+However, anyways, predicting probability is a better choice than predicting 0 or 1.
+
+\begin{equation*}
+\log( P /1 - P) = a + b \ast X
+\end{equation*}
+
+Here, P=conditional probability of success/failure given the X variable. The term loge(Odds) is called \textbf{logit}. The base of the logarithm is e (e=2.73) as we have taken a natural logarithm.
+
+\begin{equation*}
+P = \frac{1}{1+e^{-(a+b\ast X_{i^\prime})}}
+\end{equation*}
 
 
+\subsection*{Estimation using the Maximum Likelihood Method}
 
-
-
-
-
-
+The variables a and bi are estimated using the Maximum Likelihood Method (MLE).
 
 
 
