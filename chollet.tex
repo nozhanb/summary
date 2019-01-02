@@ -279,11 +279,28 @@ tional API (for directed acyclic graphs of layers, which lets you build complete
 
 
 
+\subsection{Predicting house prices: a regression example}
 
+The dataset you’ll use has an interesting difference from the two previous examples. It has relatively few data points: only 506, split between 404 training samples and 102 test samples. And each \textit{feature} in the input data (for example, the crime rate) has a different scale. For instance, some values are proportions, which take values between 0 and 1; others take values between 1 and 12, others between 0 and 100, and so on.
 
+\subsubsection{Preparing the data}
 
+A widespread best practice to deal with such data is to do feature-wise normalization: for each feature in the input data (a column in the input data matrix), you subtract the mean of the feature and divide by the standard deviation, so that the feature is centered around 0 and has a unit standard deviation. This is easily done in Numpy.
 
+\subsubsection{Building your network}
 
+The network ends with a single unit and no activation (it will be a linear layer). This is a typical setup for scalar regression (a regression where you’re trying to predict a single continuous value). Applying an activation function would constrain the range the output can take; for instance, if you applied a sigmoid activation function to the last layer, the network could only learn to predict values between 0 and 1. Here, because the last layer is purely linear, the network is free to learn to predict values in any range. \\
+
+Note that you compile the network with the mse loss function—mean squared error, the square of the difference between the predictions and the targets. This is a widely used loss function for regression problems. You’re also monitoring a new metric during training: mean absolute error (MAE). It’s the absolute value of the difference between the predictions and the targets. For instance, an MAE of 0.5 on this problem would mean your predictions are off by \$500 on average. \\
+
+\subsection{Validating your approach using K-fold validation}
+
+Because you have so few data points, the validation set would end up being very small (for instance, about 100 examples). As a consequence, the validation scores might change a lot depending on which data points you chose to use for validation and which you chose for training: the validation scores might have a high \textit{variance} with regard to the validation split. This would prevent you from reliably evaluating your model. \\
+
+The best practice in such situations is to use K-\textit{fold} cross-validation (see figure 3.11). It consists of splitting the available data into K partitions (typically K = 4 or 5), instantiating K identical models, and training each one on K – 1 partitions while evaluating on the remaining partition. The validation score for the model used is then the average of the K validation scores obtained. \\
+
+Once you’re finished tuning other parameters of the model (in addition to the
+number of epochs, you could also adjust the size of the hidden layers), [page 91] \\
 
 
 
