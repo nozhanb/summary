@@ -303,35 +303,101 @@ Once you’re finished tuning other parameters of the model (in addition to the
 number of epochs, you could also adjust the size of the hidden layers), [page 91] \\
 
 
+\newpage
+
+\section{Fundamentals of machine learning}
+
+\subsection{Evaluating machine-learning models}
+
+In machine learning, the goal is to achieve models that generalize—that perform
+well on never-before-seen data—and overfitting is the central obstacle. You can only
+control that which you can observe, so it’s crucial to be able to reliably measure the generalization power of your model.
+
+\subsubsection{Training, validation, and test sets}
+
+You may ask, why not have two sets: a training set and a test set? You’d train on the training data and evaluate on the test data. Much simpler! \\
+
+The reason is that developing a model always involves tuning its configuration: for
+example, choosing the number of layers or the size of the layers (called the \textit{hyperparameters} of the model, to distinguish them from the \textit{parameters}, which are the network’s weights). You do this tuning by using as a feedback signal the performance of the model on the validation data. In essence, this tuning is a form of \textit{learning}: a search for a good configuration in some parameter space. As a result, tuning the configuration of the model based on its performance on the validation set can quickly result in \textit{overfitting to the validation set}, even though your model is never directly trained on it. \\
+
+Central to this phenomenon is the notion of \textit{information leaks}. Every time you tune a hyperparameter of your model based on the model’s performance on the validation set, some information about the validation data leaks into the model. If you do this only once, for one parameter, then very few bits of information will leak, and your validation set will remain reliable to evaluate the model. But if you repeat this many times—running one experiment, evaluating on the validation set, and modifying your model as a result—then you’ll leak an increasingly significant amount of information about the validation set into the model. \\
+
+At the end of the day, you’ll end up with a model that performs artificially well on
+the validation data, because that’s what you optimized it for. You care about performance on completely new data, not the validation data, so you need to use a completely different, never-before-seen dataset to evaluate the model: the test dataset. Your model shouldn’t have had access to \textit{any} information about the test set, even indirectly. \\
+
+If anything about the model has been tuned based on test set performance, then your
+measure of generalization will be flawed. \\
+
+Splitting your data into training, validation, and test sets may seem straightforward, but there are a few advanced ways to do it that can come in handy when little data is available. Let’s review three classic evaluation recipes: simple hold-out validation, K-fold validation, and iterated K-fold validation with shuffling. 
+
+\subsubsection*{SIMPLE HOLD-OUT VALIDATION}
+
+Set apart some fraction of your data as your test set. Train on the remaining data, and evaluate on the test set. As you saw in the previous sections, in order to prevent information leaks, you shouldn’t tune your model based on the test set, and therefore you should \textit{also} reserve a validation set. Schematically, hold-out validation looks like figure 4.1.
 
 
+\subsubsection*{K-FOLD VALIDATION}
+
+With this approach, you split your data into K partitions of equal size. For each partition i, train a model on the remaining K – 1 partitions, and evaluate it on partition i. Your final score is then the averages of the K scores obtained. This method is helpful when the performance of your model shows significant variance based on your train-test split. Schematically, K-fold cross-validation looks like figure 4.2. \\
+
+\subsubsection*{ITERATED K-FOLD VALIDATION WITH SHUFFLING}
+
+This one is for situations in which you have relatively little data available and you need to evaluate your model as precisely as possible. I’ve found it to be extremely helpful in Kaggle competitions. It consists of applying K-fold validation multiple times, shuffling the data every time before splitting it K ways. The final score is the average of the scores obtained at each run of K-fold validation. Note that you end up training and evaluating P $\times$ K models (where P is the number of iterations you use), which can very expensive.
 
 
+\subsection{Data preprocessing, feature engineering, and feature learning}
+
+\subsubsection{Data preprocessing for neural networks}
+
+\subsubsection*{VECTORIZATION}
+
+All inputs and targets in a neural network must be tensors of floating-point data (or, in specific cases, tensors of integers). Whatever data you need to process—sound, images, text—you must first turn into tensors, a step called \textit{data vectorization}.
+
+\subsubsection*{VALUE NORMALIZATION}
+
+In general, it isn’t safe to feed into a neural network data that takes relatively large values (for example, multidigit integers, which are much larger than the initial values taken by the weights of a network) or data that is heterogeneous (for example, data where one feature is in the range 0–1 and another is in the range 100–200). Doing so can trigger large gradient updates that will prevent the network from converging. To make learning easier for your network, your data should have the following characteristics:
+
+\begin{itemize}
+	\item Take \textit{small values}—Typically, most values should be in the 0–1 range.
+	\item Be \textit{homogenous}—That is, all features should take values in roughly the same
+	range.
+\end{itemize}
+
+Additionally, the following stricter normalization practice is common and can help,
+although it isn’t always necessary (for example, you didn’t do this in the digit-classification example):
+
+\begin{itemize}
+	\item Normalize each feature independently to have a mean of 0.
+	\item Normalize each feature independently to have a standard deviation of 1.
+\end{itemize}
+
+This is easy to do with Numpy arrays: \\
+
+x -= x.mean(axis=0) \\
+x /= x.std(axis=0) \\
+
+\subsubsection*{HANDLING MISSING VALUES}
+
+In general, with neural networks, it’s safe to input missing values as 0, with the condition that 0 isn’t already a meaningful value. The network will learn from exposure to the data that the value 0 means \textit{missing data} and will start ignoring the value. \\
+
+Note that if you’re expecting missing values in the test data, but the network was
+trained on data without any missing values, the network won’t have learned to ignore
+missing values! In this situation, you should artificially generate training samples with missing entries: copy some training samples several times, and drop some of the features that you expect are likely to be missing in the test data. \\
+
+\subsubsection{Feature engineering}
+
+That’s the essence of feature engineering: making a problem easier by expressing
+it in a simpler way. It usually requires understanding the problem in depth. \\
+
+Does this mean you don’t have to worry about feature engineering as
+long as you’re using deep neural networks? No, for two reasons:
+
+\begin{itemize}
+	\item Good features still allow you to solve problems more elegantly while using fewer resources. For instance, it would be ridiculous to solve the problem of reading a clock face using a convolutional neural network.
+	\item Good features let you solve a problem with far less data. The ability of deep-learning models to learn features on their own relies on having lots of training data available; if you have only a few samples, then the information value in their features becomes critical.
+\end{itemize}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+\subsection{ Overfitting and underfitting}
 
 
 
