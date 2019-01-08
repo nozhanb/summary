@@ -1214,14 +1214,27 @@ The variables a and bi are estimated using the Maximum Likelihood Method (MLE).
 
 
 
+%@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+\newpage
 
+\section*{LinearRegression with Python}
 
+\subsubsection*{Variance Inflation Factor}
 
+A fool-proof way to detect this menace called multi-collinearity is a statistic called Variance Inflation Factor (VIF). It is a method to quantify the rise in the variability of the coefficient estimate of a particular variable because of high correlation between two or more than two predictor variables. The VIF needs to be calculated for each of the variables and if the value is very high for a particular variable, then that predictor needs to be eliminated from the model.
 
+\subsection*{Feature selection with scikit-learn}
 
+This works more or less like backward selection (not exactly) and is called Recursive Feature Elimination (RFE). The model is first run with all the variables and certain weights are assigned to all the variables. In the subsequent iterations, the variables with the smallest weights are pruned from the list of variables till the desired number of variables is left.
 
+\section{Model validation}
 
+Once the model has been built and evaluated, the next step is to validate the model.
+In the case of logistic regression models or classification models in general, we
+basically validate the model by comparing the actual class with the predicted class.
+There are various ways to do this, but the most famous and widely used is the
+\textbf{Receiver Operating Characteristic} (ROC) curve.
 
 
 
