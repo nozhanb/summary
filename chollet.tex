@@ -432,32 +432,125 @@ In Keras, weight regularization is added by passing weight regularizer instances
 
 \subsubsection{Adding dropout}
 
+Dropout is one of the most effective and most commonly used regularization techniques for neural networks, developed by Geoff Hinton and his students at the University of Toronto. Dropout, applied to a layer, consists of randomly dropping out (setting to zero) a number of output features of the layer during training. \\
+
+The dropout rate is the fraction of the features that are zeroed out; it’s usually set between 0.2 and 0.5. At test time, no units are dropped out; instead, the layer’s output values are scaled down by a factor equal to the dropout rate, to balance for the fact that more units are active than at training time. \\
+
+In Keras, you can introduce dropout in a network via the Dropout layer, which is
+applied to the output of the layer right before it: [see page 110] \\
+
+To recap, these are the most common ways to prevent overfitting in neural networks:
+
+\begin{itemize}
+	\item Get more training data.
+	\item Reduce the capacity of the network.
+	\item Add weight regularization.
+	\item Add dropout.
+\end{itemize}
+
+\subsection{The universal workflow of machine learning}
+
+\subsubsection{Defining the problem and assembling a dataset}
+
+For instance, if you’re trying to predict the movements of a stock on the stock market given its recent price history, you’re unlikely to succeed, because price history doesn’t contain much predictive information. \\
+
+One class of unsolvable problems you should be aware of is nonstationary problems.
+Suppose you’re trying to build a recommendation engine for clothing, you’re training
+it on one month of data (August), and you want to start generating recommendations
+in the winter. One big issue is that the kinds of clothes people buy change from season to season: clothes buying is a nonstationary phenomenon over the scale of a few months. \\
+
+Using machine learning trained on past data to predict the future is making the
+assumption that the future will behave like the past. That often isn’t the case. 
+
+\subsubsection{Choosing a measure of success}
+
+Your metric for success will guide the choice of a loss function: what your model
+will optimize. It should directly align with your higher-level goals, such as the success of your business. \\
+
+For balanced-classification problems, where every class is equally likely, accuracy and area under the receiver operating characteristic curve (ROC AUC) are common metrics. For class-imbalanced problems, you can use precision and recall. \\
+
+For
+class-imbalanced problems, you can use precision and recall. For ranking problems or
+multilabel classification, you can use mean average precision. And it isn’t uncommon
+to have to define your own custom metric by which to measure success. \\
+
+\subsubsection{Deciding on an evaluation protocol}
+
+Once you know what you’re aiming for, you must establish how you’ll measure your
+current progress.
+
+\begin{itemize}
+	\item \textit{Maintaining a hold-out validation set}--The way to go when you have plenty of data
+	\item \textit{Doing K-fold cross-validation}--The right choice when you have too few samples for hold-out validation to be reliable
+	\item \textit{Doing iterated K-fold validation}--For performing highly accurate model evaluation when little data is available
+\end{itemize}
+
+Just pick one of these. In most cases, the first will work well enough.
 
 
+\subsubsection{Preparing your data}
+
+here, we’ll assume a deep neural network:
+
+\begin{itemize}
+	\item your data should be formatted as tensors.
+	\item The values taken by these tensors should usually be scaled to small values: for example, in the [-1, 1] range or [0, 1] range.
+	\item If different features take values in different ranges (heterogeneous data), then the data should be normalized.
+	\item You may want to do some feature engineering, especially for small-data problems.
+\end{itemize}
+
+Once your tensors of input data and target data are ready, you can begin to train models.
+
+\subsubsection{Developing a model that does better than a baseline}
+
+Your goal at this stage is to achieve \textit{statistical power}: that is, to develop a small model that is capable of beating a dumb baseline. In the MNIST digit-classification example, anything that achieves an accuracy greater than 0.1 can be said to have statistical power; in the IMDB example, it’s anything with an accuracy greater than 0.5. \\
+
+Assuming that things go well, you need to make three key choices to build your
+first working model:
+
+\begin{itemize}
+	\item \textit{Last-layer activation}--This establishes useful constraints on the network’s output. For instance, the IMDB classification example used \textit{sigmoid} in the last layer; the regression example didn’t use any last-layer activation; and so on.
+	\item \textit{Loss function}--This should match the type of problem you’re trying to solve. For instance, the IMDB example used \textit{binary\_crossentropy}, the regression example used \textit{mse}, and so on.
+	\item \textit{Optimization configuration}--What optimizer will you use? What will its learning rate be? In most cases, it’s safe to go with \textit{rmsprop} and its default learning rate.
+\end{itemize}
+
+[See table 4.1 at page 114]
 
 
+\subsubsection{Scaling up: developing a model that overfits}
+
+Once you’ve obtained a model that has statistical power, the question becomes, is your model sufficiently powerful? Does it have enough layers and parameters to properly model the problem at hand? \\
+
+Remember that the universal tension in machine learning is between optimization and generalization; the ideal model is one that stands right at the border between underfitting and overfitting; between undercapacity and overcapacity. To figure out where this border lies, first you must cross it. \\
+
+To figure out how big a model you’ll need, you must develop a model that overfits.
+This is fairly easy:
+
+\begin{enumerate}
+	\item Add layers.
+	\item Make the layers bigger.
+	\item Train for more epochs.
+\end{enumerate}
+
+Always monitor the training loss and validation loss, as well as the training and validation values for any metrics you care about. When you see that the model’s performance on the validation data begins to degrade, you’ve achieved overfitting.
+The next stage is to start regularizing and tuning the model, to get as close as possible to the ideal model that neither underfits nor overfits.
 
 
+\subsubsection{Regularizing your model and tuning your hyperparameters}
 
+This step will take the most time: you’ll repeatedly modify your model, train it, evaluate on your validation data (not the test data, at this point), modify it again, and repeat, until the model is as good as it can get. These are some things you should try:
 
+\begin{itemize}
+	\item Add dropout.
+	\item Try different architectures: add or remove layers.
+	\item Add L1 and/or L2 regularization.
+	\item Try different hyperparameters (such as the number of units per layer or the learning rate of the optimizer) to find the optimal configuration.
+	\item Optionally, iterate on feature engineering: add new features, or remove features that don’t seem to be informative.
+\end{itemize}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Once you’ve developed a satisfactory model configuration, you can train your final
+production model on all the available data (training and validation) and evaluate it
+one last time on the test set. If it turns out that performance on the test set is significantly worse than the performance measured on the validation data, this may mean either that your validation procedure wasn’t reliable after all, or that you began overfitting to the validation data while tuning the parameters of the model. In this case, you may want to switch to a more reliable evaluation protocol (such as iterated K-fold validation).
 
 
 
